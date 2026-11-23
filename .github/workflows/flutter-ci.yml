@@ -28,6 +28,12 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: 📝 Create local.properties for Gradle
+        run: |
+          echo "flutter.sdk=$(which flutter | xargs dirname | xargs dirname)" > android/local.properties
+          echo "sdk.dir=$ANDROID_HOME" >> android/local.properties
+          cat android/local.properties
+
       - name: 📁 Ensure assets directory
         run: |
           mkdir -p assets/images
@@ -38,16 +44,16 @@ jobs:
           yes | flutter doctor --android-licenses || true
 
       - name: 📦 Install dependencies
-        run: |
-          flutter pub get
+        run: flutter pub get
 
       - name: 🧪 Run Automated Tests
-        run: |
-          flutter test test/damse_engine_test.dart
+        run: flutter test test/damse_engine_test.dart
 
-      - name: 🚀 Build APK (Verbose)
-        run: |
-          flutter build apk --debug -v
+      - name: 🩺 Flutter Doctor
+        run: flutter doctor -v
+
+      - name: 🚀 Build APK
+        run: flutter build apk --debug --no-tree-shake-icons
 
       - name: 📤 Upload APK Artifact
         uses: actions/upload-artifact@v4
