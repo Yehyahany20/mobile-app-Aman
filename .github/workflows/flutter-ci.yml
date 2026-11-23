@@ -33,6 +33,10 @@ jobs:
           mkdir -p assets/images
           touch assets/images/.gitkeep
 
+      - name: 📜 Accept Android Licenses
+        run: |
+          yes | flutter doctor --android-licenses || true
+
       - name: 📦 Install dependencies
         run: |
           flutter pub get
@@ -41,9 +45,9 @@ jobs:
         run: |
           flutter test test/damse_engine_test.dart
 
-      - name: 🚀 Build APK
+      - name: 🚀 Build APK (Verbose)
         run: |
-          flutter build apk --debug --no-tree-shake-icons
+          flutter build apk --debug -v
 
       - name: 📤 Upload APK Artifact
         uses: actions/upload-artifact@v4
