@@ -22,27 +22,16 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: 📱 Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: 🐦 Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
           cache: true
 
-      - name: 📁 Ensure project assets & structure
+      - name: 📁 Ensure assets directory
         run: |
           mkdir -p assets/images
           touch assets/images/.gitkeep
-
-      - name: 📜 Accept Android SDK Licenses
-        run: |
-          yes | flutter doctor --android-licenses || true
-
-      - name: 🔨 Generate Android Platform Wrappers
-        run: |
-          flutter create . --project-name aman_app --org com.yehya.aman --platforms android
 
       - name: 📦 Install dependencies
         run: |
@@ -52,7 +41,7 @@ jobs:
         run: |
           flutter test test/damse_engine_test.dart
 
-      - name: 🚀 Build APK (Debug)
+      - name: 🚀 Build APK
         run: |
           flutter build apk --debug --no-tree-shake-icons
 
