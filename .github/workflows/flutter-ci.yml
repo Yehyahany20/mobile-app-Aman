@@ -28,16 +28,25 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: 📝 Create local.properties for Gradle
+      - name: 🔖 Save project source files
         run: |
-          echo "flutter.sdk=$(which flutter | xargs dirname | xargs dirname)" > android/local.properties
-          echo "sdk.dir=$ANDROID_HOME" >> android/local.properties
-          cat android/local.properties
+          cp -r lib /tmp/lib_backup
+          cp pubspec.yaml /tmp/pubspec.yaml.bak
+          cp -r assets /tmp/assets_backup || true
+          cp -r test /tmp/test_backup || true
+          cp README.md /tmp/README.md.bak || true
 
-      - name: 📁 Ensure assets directory
+      - name: 🏗️ Let Flutter generate the Android platform
         run: |
-          mkdir -p assets/images
-          touch assets/images/.gitkeep
+          flutter create . --project-name aman_app --org com.yehya.aman --platforms android
+
+      - name: ♻️ Restore our actual source files
+        run: |
+          cp -r /tmp/lib_backup/* lib/
+          cp /tmp/pubspec.yaml.bak pubspec.yaml
+          cp -r /tmp/assets_backup/* assets/ || true
+          cp -r /tmp/test_backup/* test/ || true
+          cp /tmp/README.md.bak README.md || true
 
       - name: 📜 Accept Android Licenses
         run: |
@@ -49,10 +58,7 @@ jobs:
       - name: 🧪 Run Automated Tests
         run: flutter test test/damse_engine_test.dart
 
-      - name: 🩺 Flutter Doctor
-        run: flutter doctor -v
-
-      - name: 🚀 Build APK
+      - name: 🚀 Build APK (Debug)
         run: flutter build apk --debug --no-tree-shake-icons
 
       - name: 📤 Upload APK Artifact
